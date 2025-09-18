@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ko‘p Funksiyali Loyha</title>
+<style>
+/* Global styles */
+body {
+  margin:0; padding:0;
+  font-family:'Arial', sans-serif;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+              url('https://images.unsplash.com/photo-1680133274737-ff7f7d6e95f7?auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+  color:#fff;
+  display:flex; flex-direction:column; align-items:center;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+h1,h2,h3,p { margin:0; padding:0; }
+
+/* Add button */
+#addButton {
+  position: fixed; bottom: 20px; right: 20px;
+  width:60px; height:60px; border-radius:50%;
+  background:#ff5252; font-size:35px; display:flex;
+  justify-content:center; align-items:center; cursor:pointer;
+  box-shadow:0 5px 20px rgba(0,0,0,0.5);
+  transition:0.3s;
+}
+#addButton:hover { transform: scale(1.1); background:#ff1744; }
+
+/* Admin panel */
+#adminPanel {
+  display:none; position: fixed; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  background: rgba(0,0,0,0.95); padding:20px;
+  border-radius:15px; box-shadow:0 8px 30px rgba(0,0,0,0.8);
+  width:360px; animation: fadeIn 0.5s ease;
+  z-index:1000;
+}
+#adminPanel input, #adminPanel button {
+  width:100%; margin:8px 0; padding:10px; border-radius:8px; border:none; font-size:14px;
+}
+#adminPanel button { background:#00e676; color:#000; cursor:pointer; transition:0.3s; }
+#adminPanel button:hover { transform: scale(1.05); }
+
+/* Items container */
+#items {
+  display:flex; flex-wrap:wrap; justify-content:center;
+  margin-top:50px; width:100%; max-width:1200px;
+  animation: fadeIn 1s ease;
+}
+.item {
+  width:300px; margin:15px; border-radius:15px; background: rgba(0,0,0,0.5);
+  box-shadow:0 8px 25px rgba(0,0,0,0.6); overflow:hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: fadeUp 0.5s ease forwards;
+}
+.item:hover { transform: translateY(-10px) scale(1.03); box-shadow:0 12px 30px rgba(0,0,0,0.8); }
+.item img { width:100%; display:block; border-bottom:2px solid #00e676; }
+.item-content { padding:15px; }
+.item-content h3 { margin:0; font-size:18px; color:#00ffea; }
+.item-content p { font-size:14px; margin:10px 0; }
+.item-content a button { width:100%; background:#ff5252; color:#fff; cursor:pointer; }
+
+/* Category titles */
+.category-title {
+  width:100%; text-align:left; font-weight:bold; font-size:20px; margin:20px 0 0 20px; color:#00e676;
+}
+
+/* Animations */
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+@keyframes fadeUp { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
+
+/* Responsive */
+@media(max-width:768px){ .item{width:90%; margin:10px;} }
+</style>
+</head>
+<body>
+
+<h1 style="margin-top:20px;">Ko‘p Funksiyali Loyha</h1>
+
+<div id="addButton">+</div>
+
+<div id="adminPanel">
+  <h3>Admin Panel</h3>
+  <input type="password" id="adminPass" placeholder="Parol">
+  <button id="loginBtn">Kirish</button>
+  <div id="formDiv" style="display:none;">
+    <input id="title" placeholder="Loyha Nomi">
+    <input id="category" placeholder="Tur (1 yoki 2)">
+    <input id="description" placeholder="Qisqa Izoh">
+    <input id="image" placeholder="Rasm URL">
+    <input id="link" placeholder="Ko‘rish Linki">
+    <button id="saveBtn">Saqlash</button>
+  </div>
+</div>
+
+<div id="items"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+// Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDbQw4xwGwmpx4Q3HeNCIK_wA_UIKLqwmA",
+  authDomain: "baza-7abed.firebaseapp.com",
+  projectId: "baza-7abed",
+  storageBucket: "baza-7abed.firebasestorage.app",
+  messagingSenderId: "942105645483",
+  appId: "1:942105645483:web:e6d5beafe7b7a6d46b82ee"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const ADMIN_PASSWORD = "1234";
+
+const addBtn = document.getElementById("addButton");
+const adminPanel = document.getElementById("adminPanel");
+const loginBtn = document.getElementById("loginBtn");
+const formDiv = document.getElementById("formDiv");
+const saveBtn = document.getElementById("saveBtn");
+const itemsDiv = document.getElementById("items");
+
+// Admin panel ochish
+addBtn.addEventListener("click",()=>{ adminPanel.style.display="block"; });
+
+// Login
+loginBtn.addEventListener("click",()=>{
+  const pass = document.getElementById("adminPass").value;
+  if(pass===ADMIN_PASSWORD){
+    formDiv.style.display="block";
+    loginBtn.style.display="none";
+    document.getElementById("adminPass").style.display="none";
+  } else { alert("Siz admin emassiz!"); }
+});
+
+// Saqlash
+saveBtn.addEventListener("click", async ()=>{
+  const title = document.getElementById("title").value.trim();
+  const category = document.getElementById("category").value.trim() || "1";
+  const description = document.getElementById("description").value.trim();
+  const image = document.getElementById("image").value.trim();
+  const link = document.getElementById("link").value.trim();
+  if(!title || !description || !image) { alert("Barcha maydonlarni to‘ldiring!"); return; }
+  try{
+    await addDoc(collection(db,"projects"),{
+      title,category,description,image,link,
+      createdAt:serverTimestamp()
+    });
+    document.getElementById("title").value="";
+    document.getElementById("category").value="";
+    document.getElementById("description").value="";
+    document.getElementById("image").value="";
+    document.getElementById("link").value="";
+    alert("Loyha saqlandi!");
+    adminPanel.style.display="none";
+  }catch(err){
+    alert("Xatolik yuz berdi: "+err.message);
+  }
+});
+
+// Real-time loyhalar
+const q = query(collection(db,"projects"),orderBy("createdAt","desc"));
+onSnapshot(q,(snapshot)=>{
+  itemsDiv.innerHTML="";
+  const groups = {};
+  snapshot.docs.forEach(doc=>{
+    const data = doc.data();
+    if(!groups[data.category]) groups[data.category]=[];
+    groups[data.category].push(data);
+  });
+  Object.keys(groups).forEach(cat=>{
+    const catTitle = document.createElement("div");
+    catTitle.className="category-title";
+    catTitle.innerText="Tur: "+cat;
+    itemsDiv.appendChild(catTitle);
+    groups[cat].forEach(data=>{
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML=`
+        <img src="${data.image}" alt="${data.title}">
+        <div class="item-content">
+          <h3>${data.title}</h3>
+          <p>${data.description}</p>
+          <a href="${data.link}" target="_blank"><button>Ko‘rish</button></a>
+        </div>
+      `;
+      itemsDiv.appendChild(div);
+    });
+  });
+});
+</script>
+
+</body>
+</html>

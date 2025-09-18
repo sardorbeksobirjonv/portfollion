@@ -1,0 +1,732 @@
+<!-- Save this as index.html -->
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sardor — About Me (Zamonaviy)</title>
+
+  <!-- Tailwind CDN (for quick demo) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom styles -->
+  <style>
+    /* Background gradient + subtle moving radial lights */
+    :root{
+      --card-bg: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.06);
+      --accent: 0 9px 30px rgba(99,102,241,0.12);
+    }
+
+    body{
+      min-height:100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* animated background layers */
+    .bg-wrap{
+      position:fixed;
+      inset:0;
+      z-index:-50;
+      overflow:hidden;
+      background: radial-gradient(1200px 600px at 10% 20%, rgba(99,102,241,0.12), transparent 8%),
+                  radial-gradient(1000px 500px at 90% 80%, rgba(236,72,153,0.08), transparent 8%),
+                  linear-gradient(180deg, #07070a 0%, #0b1220 50%, #020315 100%);
+      transform:translateZ(0);
+    }
+
+    .float-orb{
+      position:absolute;
+      filter: blur(40px);
+      opacity:0.55;
+      mix-blend-mode: screen;
+      animation: floaty 10s ease-in-out infinite;
+      border-radius:50%;
+      z-index:-40;
+    }
+    .orb1{ width:420px; height:420px; left:-80px; top:-80px; background:linear-gradient(135deg,#6366f1,#06b6d4); animation-duration:14s;}
+    .orb2{ width:300px; height:300px; right:-60px; bottom:-60px; background:linear-gradient(135deg,#ec4899,#f97316); animation-duration:18s; }
+    .orb3{ width:220px; height:220px; left:50%; top:10%; transform:translateX(-50%); background:linear-gradient(135deg,#34d399,#60a5fa); animation-duration:12s;}
+
+    @keyframes floaty {
+      0%{ transform: translateY(0) scale(1); }
+      50%{ transform: translateY(-30px) scale(1.03); }
+      100%{ transform: translateY(0) scale(1); }
+    }
+
+    /* Particles canvas will sit above bg */
+    #particles{
+      position: absolute;
+      inset:0;
+      z-index:-45;
+      pointer-events:none;
+      opacity:0.6;
+      mix-blend-mode:screen;
+    }
+
+    /* Glass card style */
+    .glass {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(8px) saturate(140%);
+      -webkit-backdrop-filter: blur(8px) saturate(140%);
+      box-shadow: var(--accent);
+    }
+
+    /* Entrance animations */
+    @keyframes slideUp {
+      0%{ opacity:0; transform: translateY(28px) scale(0.995); }
+      100%{ opacity:1; transform: translateY(0) scale(1); }
+    }
+    .enter {
+      opacity:0;
+      transform-origin: top center;
+      animation-name: slideUp;
+      animation-fill-mode: forwards;
+      animation-timing-function: cubic-bezier(.2,.9,.2,1);
+    }
+
+    /* Tech card 3D hover */
+    .tech-card {
+      transform-style: preserve-3d;
+      perspective: 900px;
+      transition: transform .45s cubic-bezier(.2,.9,.2,1), box-shadow .35s;
+      will-change: transform;
+    }
+    .tech-card-inner{
+      transform-style: preserve-3d;
+      transition: transform .45s;
+      padding:1.25rem;
+      border-radius:1rem;
+      backface-visibility:hidden;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .tech-card:hover .tech-card-inner{
+      transform: translateY(-8px) rotateX(6deg) rotateY(6deg) scale(1.02);
+      box-shadow: 0 20px 50px rgba(99,102,241,0.18);
+    }
+    .tech-icon {
+      transform: translateZ(20px);
+      transition: transform .5s;
+    }
+    .tech-card:hover .tech-icon{
+      transform: translateZ(40px) rotate(8deg) scale(1.08);
+    }
+    .glow {
+      position: absolute;
+      inset: auto;
+      width: 140%;
+      height: 140%;
+      left: -20%;
+      top: -20%;
+      filter: blur(30px);
+      opacity:0.12;
+      z-index:-1;
+      border-radius: 1.25rem;
+      transition: opacity .4s;
+    }
+    .tech-card:hover .glow{ opacity:0.22; }
+
+    /* small shadow under hero image */
+    .soft-shadow {
+      filter: blur(16px);
+      opacity:0.65;
+    }
+
+    /* utilities for stagger */
+    [data-order] { opacity:0; }
+  </style>
+</head>
+<body class="relative text-white">
+
+  <!-- Animated background -->
+  <div class="bg-wrap" aria-hidden="true">
+    <div class="float-orb orb1"></div>
+    <div class="float-orb orb2"></div>
+    <div class="float-orb orb3"></div>
+    <canvas id="particles"></canvas>
+  </div>
+
+  <!-- Main container -->
+  <main class="min-h-screen flex items-center justify-center px-6 py-12">
+    <div class="max-w-7xl w-full">
+
+      <!-- Hero / About -->
+      <section class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <!-- Left: profile card -->
+        <div class="enter glass p-6 lg:p-10 rounded-2xl relative" data-order="0" style="animation-duration:800ms;">
+          <div class="flex flex-col lg:flex-row items-center gap-6">
+            <div class="relative">
+              <!-- Profile image with soft shadow -->
+              <img src="https://via.placeholder.com/320" alt="Sardor profil rasmi" class="w-44 h-44 rounded-2xl object-cover shadow-2xl transform transition duration-700 hover:scale-105">
+              <div class="soft-shadow absolute inset-x-0 -bottom-6 mx-auto w-40 h-6 bg-gradient-to-r from-transparent via-sky-500 to-transparent"></div>
+            </div>
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-400">
+                Sardor — Web & Mobile Developer
+              </h1>
+              <p class="text-gray-200/80 mb-4 leading-relaxed max-w-xl">
+                Salom! Men <strong class="text-indigo-300">Sardor</strong>. Zamonaviy veb-saytlar, mobil ilovalar va UI/UX dizayn yarataman.
+                Tajriba: <strong class="text-white">5 yil</strong>. Mahorat: React, Next.js, Tailwind, Node, Python va boshqalar.
+              </p>
+
+              <div class="flex flex-wrap gap-3">
+                <a href="servike.html" class="inline-flex items-center gap-3 px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-cyan-400 shadow-lg hover:scale-105 transition transform">
+                  🚀 Hire me
+                </a>
+                <a href="#tech" class="inline-flex items-center gap-3 px-4 py-2 rounded-lg border border-white/6 hover:bg-white/3 transition">
+                  📚 Texnologiyalar
+                </a>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: stats / bio card -->
+        <div class="enter glass p-6 lg:p-10 rounded-2xl relative" data-order="1" style="animation-duration:900ms;">
+          <h2 class="text-2xl font-bold mb-4">Qisqacha ma'lumot</h2>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 rounded-xl bg-white/3">
+              <p class="text-sm text-gray-300">Tug‘ilgan yil</p>
+              <p class="text-lg font-semibold">2007</p>
+            </div>
+            <div class="p-4 rounded-xl bg-white/3">
+              <p class="text-sm text-gray-300">Tajriba</p>
+              <p class="text-lg font-semibold">5 yil</p>
+            </div>
+            <div class="p-4 rounded-xl bg-white/3">
+              <p class="text-sm text-gray-300">Asosiy</p>
+              <p class="text-lg font-semibold">Frontend & Mobile</p>
+            </div>
+            <div class="p-4 rounded-xl bg-white/3">
+              <p class="text-sm text-gray-300">Joy</p>
+              <p class="text-lg font-semibold">Uzbekistan</p>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <h3 class="text-lg font-semibold mb-2">Ishlash uslubim</h3>
+            <p class="text-gray-300">
+              Tezkor, toza kod, responsive dizayn, performance va accessibilityga e'tibor. Loyihani GitHub orqali boshqaraman va deploy bo‘yicha yordam beraman.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Technologies grid -->
+      <section id="tech" class="mt-14">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl sm:text-3xl font-extrabold">Texnologiyalarim</h2>
+          <p class="text-sm text-gray-300 hidden sm:block">Hover qilganda 3D effekti va glow ko‘rasiz ✨</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6" role="list">
+          <!-- Individual tech card template - repeat and fill icons & names -->
+          
+          <!-- HTML5 -->
+          <div class="enter" data-order="2" style="animation-duration:1000ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(59,130,246,0.35), rgba(139,92,246,0.25));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5">
+                  <div class="text-center">
+                    <p class="font-semibold">HTML5</p>
+                    <p class="text-xs text-gray-300">Markup</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CSS3 -->
+          <div class="enter" data-order="3" style="animation-duration:1020ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(59,130,246,0.08), rgba(6,182,212,0.12));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3">
+                  <div class="text-center">
+                    <p class="font-semibold">CSS3</p>
+                    <p class="text-xs text-gray-300">Styling</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- JavaScript -->
+          <div class="enter" data-order="4" style="animation-duration:1040ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(234,88,12,0.12), rgba(250,204,21,0.08));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript">
+                  <div class="text-center">
+                    <p class="font-semibold">JavaScript</p>
+                    <p class="text-xs text-gray-300">ES6+</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TypeScript -->
+          <div class="enter" data-order="5" style="animation-duration:1060ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(59,130,246,0.12), rgba(99,102,241,0.08));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" alt="TypeScript">
+                  <div class="text-center">
+                    <p class="font-semibold">TypeScript</p>
+                    <p class="text-xs text-gray-300">Types</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- React -->
+          <div class="enter" data-order="6" style="animation-duration:1080ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(120deg, rgba(34,211,238,0.12), rgba(59,130,246,0.08));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React">
+                  <div class="text-center">
+                    <p class="font-semibold">React</p>
+                    <p class="text-xs text-gray-300">SPA</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Next.js -->
+          <div class="enter" data-order="7" style="animation-duration:1100ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(148,163,184,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14 bg-white rounded p-1" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" alt="Next.js">
+                  <div class="text-center">
+                    <p class="font-semibold">Next.js</p>
+                    <p class="text-xs text-gray-300">SSR / SSG</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vue -->
+          <div class="enter" data-order="8" style="animation-duration:1120ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(120deg, rgba(34,197,94,0.08), rgba(34,211,238,0.04));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" alt="Vue.js">
+                  <div class="text-center">
+                    <p class="font-semibold">Vue</p>
+                    <p class="text-xs text-gray-300">Framework</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Angular -->
+          <div class="enter" data-order="9" style="animation-duration:1140ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(239,68,68,0.08), rgba(99,102,241,0.03));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg" alt="Angular">
+                  <div class="text-center">
+                    <p class="font-semibold">Angular</p>
+                    <p class="text-xs text-gray-300">SPA</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tailwind -->
+          <div class="enter" data-order="10" style="animation-duration:1160ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(34,211,238,0.06), rgba(99,102,241,0.06));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" alt="Tailwind">
+                  <div class="text-center">
+                    <p class="font-semibold">Tailwind</p>
+                    <p class="text-xs text-gray-300">Utility CSS</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Node.js -->
+          <div class="enter" data-order="11" style="animation-duration:1180ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(72,187,120,0.08), rgba(34,197,94,0.05));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js">
+                  <div class="text-center">
+                    <p class="font-semibold">Node.js</p>
+                    <p class="text-xs text-gray-300">Backend</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Express -->
+          <div class="enter" data-order="12" style="animation-duration:1200ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(148,163,184,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14 bg-white rounded p-1" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" alt="Express">
+                  <div class="text-center">
+                    <p class="font-semibold">Express</p>
+                    <p class="text-xs text-gray-300">Server</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Python -->
+          <div class="enter" data-order="13" style="animation-duration:1220ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(234,179,8,0.06), rgba(59,130,246,0.03));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python">
+                  <div class="text-center">
+                    <p class="font-semibold">Python</p>
+                    <p class="text-xs text-gray-300">Scripts / ML</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PHP -->
+          <div class="enter" data-order="14" style="animation-duration:1240ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(99,102,241,0.04), rgba(165,180,252,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" alt="PHP">
+                  <div class="text-center">
+                    <p class="font-semibold">PHP</p>
+                    <p class="text-xs text-gray-300">Web</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Java -->
+          <div class="enter" data-order="15" style="animation-duration:1260ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(239,68,68,0.04), rgba(234,88,12,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java">
+                  <div class="text-center">
+                    <p class="font-semibold">Java</p>
+                    <p class="text-xs text-gray-300">Android / Backend</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- C++ -->
+          <div class="enter" data-order="16" style="animation-duration:1280ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(59,130,246,0.03), rgba(99,102,241,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" alt="C++">
+                  <div class="text-center">
+                    <p class="font-semibold">C++</p>
+                    <p class="text-xs text-gray-300">Performance</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- C# -->
+          <div class="enter" data-order="17" style="animation-duration:1300ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(16,185,129,0.03), rgba(6,182,212,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" alt="C#">
+                  <div class="text-center">
+                    <p class="font-semibold">C#</p>
+                    <p class="text-xs text-gray-300">Unity / .NET</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MySQL -->
+          <div class="enter" data-order="18" style="animation-duration:1320ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(59,130,246,0.03), rgba(6,182,212,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL">
+                  <div class="text-center">
+                    <p class="font-semibold">MySQL</p>
+                    <p class="text-xs text-gray-300">Database</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MongoDB -->
+          <div class="enter" data-order="19" style="animation-duration:1340ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(34,197,94,0.06), rgba(34,197,94,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB">
+                  <div class="text-center">
+                    <p class="font-semibold">MongoDB</p>
+                    <p class="text-xs text-gray-300">NoSQL</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Firebase -->
+          <div class="enter" data-order="20" style="animation-duration:1360ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(250,204,21,0.06), rgba(234,88,12,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" alt="Firebase">
+                  <div class="text-center">
+                    <p class="font-semibold">Firebase</p>
+                    <p class="text-xs text-gray-300">Realtime</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Git -->
+          <div class="enter" data-order="21" style="animation-duration:1380ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(249,115,22,0.06), rgba(234,88,12,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git">
+                  <div class="text-center">
+                    <p class="font-semibold">Git</p>
+                    <p class="text-xs text-gray-300">VCS</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GitHub -->
+          <div class="enter" data-order="22" style="animation-duration:1400ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(148,163,184,0.05), rgba(99,102,241,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub">
+                  <div class="text-center">
+                    <p class="font-semibold">GitHub</p>
+                    <p class="text-xs text-gray-300">Repos</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Docker -->
+          <div class="enter" data-order="23" style="animation-duration:1420ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(59,130,246,0.05), rgba(37,99,235,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" alt="Docker">
+                  <div class="text-center">
+                    <p class="font-semibold">Docker</p>
+                    <p class="text-xs text-gray-300">Containers</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Figma -->
+          <div class="enter" data-order="24" style="animation-duration:1440ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(236,72,153,0.05), rgba(99,102,241,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" alt="Figma">
+                  <div class="text-center">
+                    <p class="font-semibold">Figma</p>
+                    <p class="text-xs text-gray-300">Design</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Photoshop -->
+          <div class="enter" data-order="25" style="animation-duration:1460ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(59,130,246,0.04), rgba(99,102,241,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-plain.svg" alt="Photoshop">
+                  <div class="text-center">
+                    <p class="font-semibold">Photoshop</p>
+                    <p class="text-xs text-gray-300">Editing</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Illustrator -->
+          <div class="enter" data-order="26" style="animation-duration:1480ms;">
+            <div class="tech-card relative">
+              <div class="tech-card-inner glass relative overflow-hidden">
+                <div class="glow" style="background: linear-gradient(90deg, rgba(249,115,22,0.04), rgba(234,88,12,0.02));"></div>
+                <div class="flex flex-col items-center justify-center gap-3">
+                  <img class="tech-icon w-14 h-14" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/illustrator/illustrator-plain.svg" alt="Illustrator">
+                  <div class="text-center">
+                    <p class="font-semibold">Illustrator</p>
+                    <p class="text-xs text-gray-300">Vector</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- end grid -->
+
+        <!-- <p class="mt-6 text-sm text-gray-300/80">Agar boshqa texnologiyalar qo‘shmoqchi bo‘lsangiz yoki kartochkalar rangini o‘zgartirmoqchi bo‘lsangiz—ayting, darhol sozlayman.</p> -->
+      </section>
+
+      <!-- Footer / contact anchor -->
+      <!-- <section id="contact" class="mt-16 text-center">
+        <div class="enter inline-block glass p-6 rounded-2xl" data-order="27" style="animation-duration:1500ms;">
+          <h3 class="text-xl font-bold mb-2">Bog'lanish</h3>
+          <p class="text-gray-300 mb-4">Email: <strong class="text-white">sardor@example.com</strong> — Telegram: <strong class="text-white">@sardor</strong></p>
+          <div class="flex items-center justify-center gap-4">
+            <a href="mailto:sardor@example.com" class="px-4 py-2 rounded-md bg-indigo-600 hover:scale-105 transition">Email yuborish</a>
+            <a href="#" class="px-4 py-2 rounded-md border border-white/6 hover:bg-white/3 transition">CV yuklab olish</a>
+          </div>
+        </div>
+      </section> -->
+
+    </div>
+  </main>
+
+  <!-- SCRIPTS -->
+  <script>
+    /* 1) Staggered entrance animations */
+    document.addEventListener('DOMContentLoaded', () => {
+      const items = document.querySelectorAll('[data-order]');
+      items.forEach((el, i) => {
+        const delay = (Number(el.getAttribute('data-order')) || i) * 80;
+        el.style.animationDelay = delay + 'ms';
+        el.style.animationDuration = (700 + (i * 20)) + 'ms';
+        el.classList.add('enter');
+      });
+
+      // Add subtle tilt parallax on mouse move for tech cards
+      const cards = document.querySelectorAll('.tech-card');
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const cx = rect.width/2;
+          const cy = rect.height/2;
+          const dx = (x - cx) / cx;
+          const dy = (y - cy) / cy;
+          const inner = card.querySelector('.tech-card-inner');
+          inner.style.transform = `translateY(-6px) rotateX(${dy * 6}deg) rotateY(${dx * 8}deg) scale(1.02)`;
+        });
+        card.addEventListener('mouseleave', () => {
+          const inner = card.querySelector('.tech-card-inner');
+          inner.style.transform = '';
+        });
+      });
+    });
+
+    /* 2) Simple particles background (lightweight) */
+    (function(){
+      const canvas = document.getElementById('particles');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = innerWidth;
+      let h = canvas.height = innerHeight;
+      const particles = [];
+      const PARTICLE_COUNT = Math.round((w*h)/90000); // scales with screen size
+
+      function rand(min,max){ return Math.random()*(max-min)+min; }
+
+      function Particle(){
+        this.x = rand(0,w);
+        this.y = rand(0,h);
+        this.r = rand(0.6,2.4);
+        this.vx = rand(-0.1,0.1);
+        this.vy = rand(-0.15,0.15);
+        this.alpha = rand(0.06,0.18);
+        this.color = `rgba(255,255,255,${this.alpha})`;
+      }
+      for(let i=0;i<PARTICLE_COUNT;i++) particles.push(new Particle());
+
+      function resize(){ w=canvas.width=innerWidth; h=canvas.height=innerHeight; }
+      window.addEventListener('resize', resize);
+
+      function frame(){
+        ctx.clearRect(0,0,w,h);
+        for(let p of particles){
+          p.x += p.vx;
+          p.y += p.vy;
+          if(p.x > w+10) p.x = -10;
+          if(p.x < -10) p.x = w+10;
+          if(p.y > h+10) p.y = -10;
+          if(p.y < -10) p.y = h+10;
+          ctx.beginPath();
+          ctx.fillStyle = p.color;
+          ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+          ctx.fill();
+        }
+        requestAnimationFrame(frame);
+      }
+      frame();
+    })();
+  </script>
+</body>
+</html>

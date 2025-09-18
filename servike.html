@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mening Xizmatlarim</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"/>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    perspective: 1500px;
+  }
+  .service-card {
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+    transform-style: preserve-3d;
+  }
+  .service-card:hover {
+    transform: rotateY(15deg) rotateX(10deg) scale(1.1);
+    box-shadow: 0 30px 50px rgba(0,0,0,0.7);
+  }
+  .next-btn {
+    transition: transform 0.3s, background 0.3s;
+  }
+  .next-btn:hover {
+    transform: scale(1.1);
+    background: linear-gradient(to right, #ff6a00, #ee0979);
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start text-white py-16">
+
+<h2 class="text-5xl font-bold mb-12 text-center" data-aos="fade-down">Mening Xizmatlarim</h2>
+
+<div class="max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-6">
+
+  <!-- Web Development -->
+  <div class="service-card bg-gradient-to-tr from-indigo-600 to-blue-500 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-up" data-aos-delay="100">
+    <img src="https://cdn-icons-png.flaticon.com/512/1006/1006553.png" class="w-14 h-14 mb-4" alt="Web Development">
+    <h3 class="text-2xl font-semibold mb-2">Web Development</h3>
+    <p class="text-gray-100 text-sm">HTML, CSS, JS, React, Next.js bilan zamonaviy veb saytlar yarataman.</p>
+  </div>
+
+  <!-- Mobile Apps -->
+  <div class="service-card bg-gradient-to-tr from-green-600 to-teal-400 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-left" data-aos-delay="200">
+    <img src="https://cdn-icons-png.flaticon.com/512/2910/2910767.png" class="w-14 h-14 mb-4" alt="Mobile Apps">
+    <h3 class="text-2xl font-semibold mb-2">Mobile Apps</h3>
+    <p class="text-gray-100 text-sm">iOS va Android ilovalar: React Native, Flutter yordamida yarataman.</p>
+  </div>
+
+  <!-- Telegram Bots -->
+  <div class="service-card bg-gradient-to-tr from-purple-600 to-pink-500 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-right" data-aos-delay="300">
+    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png" class="w-14 h-14 mb-4" alt="Telegram Bots">
+    <h3 class="text-2xl font-semibold mb-2">Telegram Bots</h3>
+    <p class="text-gray-100 text-sm">Admin panel, inline tugmalar va API integratsiyali botlar yarataman.</p>
+  </div>
+
+  <!-- UI/UX Design -->
+  <div class="service-card bg-gradient-to-tr from-pink-600 to-red-500 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-up-right" data-aos-delay="400">
+    <img src="https://cdn-icons-png.flaticon.com/512/2942/2942132.png" class="w-14 h-14 mb-4" alt="UI/UX Design">
+    <h3 class="text-2xl font-semibold mb-2">UI/UX Design</h3>
+    <p class="text-gray-100 text-sm">Foydalanuvchi uchun qulay va chiroyli interfeyslar yarataman: Figma, Photoshop.</p>
+  </div>
+
+  <!-- Backend Development -->
+  <div class="service-card bg-gradient-to-tr from-yellow-600 to-orange-500 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-down-left" data-aos-delay="500">
+    <img src="https://cdn-icons-png.flaticon.com/512/919/919825.png" class="w-14 h-14 mb-4" alt="Backend">
+    <h3 class="text-2xl font-semibold mb-2">Backend Development</h3>
+    <p class="text-gray-100 text-sm">Node.js, Express, PHP, Python bilan server va API tizimlarini yarataman.</p>
+  </div>
+
+  <!-- Database Management -->
+  <div class="service-card bg-gradient-to-tr from-blue-600 to-cyan-400 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-up-left" data-aos-delay="600">
+    <img src="https://cdn-icons-png.flaticon.com/512/2721/2721297.png" class="w-14 h-14 mb-4" alt="Database">
+    <h3 class="text-2xl font-semibold mb-2">Database Management</h3>
+    <p class="text-gray-100 text-sm">MySQL, MongoDB, Firebase bilan ma’lumotlar bazasi yaratish va optimizatsiya.</p>
+  </div>
+
+  <!-- QA Testing -->
+  <div class="service-card bg-gradient-to-tr from-purple-700 to-indigo-500 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-up-right" data-aos-delay="700">
+    <img src="https://cdn-icons-png.flaticon.com/512/2910/2910439.png" class="w-14 h-14 mb-4" alt="QA Testing">
+    <h3 class="text-2xl font-semibold mb-2">QA Testing</h3>
+    <p class="text-gray-100 text-sm">Web va mobil ilovalarni test qilib, xatoliklarni bartaraf etaman.</p>
+  </div>
+
+  <!-- Cloud Services -->
+  <div class="service-card bg-gradient-to-tr from-green-700 to-teal-500 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-down-right" data-aos-delay="800">
+    <img src="https://cdn-icons-png.flaticon.com/512/414/414927.png" class="w-14 h-14 mb-4" alt="Cloud">
+    <h3 class="text-2xl font-semibold mb-2">Cloud Services</h3>
+    <p class="text-gray-100 text-sm">AWS, Firebase, Heroku va boshqa cloud xizmatlar bilan ishlayman.</p>
+  </div>
+
+  <!-- SEO Optimization -->
+  <div class="service-card bg-gradient-to-tr from-red-600 to-orange-400 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-left" data-aos-delay="900">
+    <img src="https://cdn-icons-png.flaticon.com/512/414/414927.png" class="w-14 h-14 mb-4" alt="SEO Optimization">
+    <h3 class="text-2xl font-semibold mb-2">SEO Optimization</h3>
+    <p class="text-gray-100 text-sm">Saytlar uchun yuqori qidiruv natijalari va optimizatsiya xizmatlarini taqdim qilaman.</p>
+  </div>
+
+  <!-- Digital Marketing -->
+  <div class="service-card bg-gradient-to-tr from-indigo-700 to-purple-500 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-right" data-aos-delay="1000">
+    <img src="https://cdn-icons-png.flaticon.com/512/1006/1006553.png" class="w-14 h-14 mb-4" alt="Digital Marketing">
+    <h3 class="text-2xl font-semibold mb-2">Digital Marketing</h3>
+    <p class="text-gray-100 text-sm">Sotsial tarmoqlar, Google Ads va boshqa onlayn marketing xizmatlarini taqdim qilaman.</p>
+  </div>
+
+  <!-- Extra Realistic Services -->
+  <div class="service-card bg-gradient-to-tr from-yellow-500 to-red-500 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-up" data-aos-delay="1100">
+    <img src="https://cdn-icons-png.flaticon.com/512/3143/3143460.png" class="w-14 h-14 mb-4" alt="Cybersecurity">
+    <h3 class="text-2xl font-semibold mb-2">Cybersecurity</h3>
+    <p class="text-gray-100 text-sm">Sayt va ilovalarni himoya qilish: xavfsizlik testlari va xavfsizlik protokollari.</p>
+  </div>
+
+  <div class="service-card bg-gradient-to-tr from-pink-500 to-purple-500 rounded-3xl p-6 shadow-lg flex flex-col items-center text-center" 
+       data-aos="fade-up-left" data-aos-delay="1200">
+    <img src="https://cdn-icons-png.flaticon.com/512/2910/2910338.png" class="w-14 h-14 mb-4" alt="AI & ML">
+    <h3 class="text-2xl font-semibold mb-2">AI & Machine Learning</h3>
+    <p class="text-gray-100 text-sm">Sun’iy intellekt va mashina o‘rganish bilan ilg‘or loyihalarni yarataman.</p>
+  </div>
+
+</div>
+
+<!-- Next Page Button -->
+<div class="mt-12">
+  <a href="mywork.html" class="next-btn px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-bold rounded-xl shadow-lg inline-block">
+    Keyingi Sahifa →
+  </a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 1200,
+    easing: 'ease-in-out',
+    once: true,
+  });
+</script>
+</body>
+</html>
